@@ -1,21 +1,32 @@
 <template>
   <div id="app">
+    <!-- 头部信息 -->
+    <app-header></app-header>
+    <!-- 导航 -->
+    <div class="nav">
+      <app-nav></app-nav>
+    </div>
+    <!-- 内容 -->
+    <div class="content">
+      <router-view></router-view>
+    </div>
+
   </div>
 </template>
 
 <script>
+import Header from '@/components/header/Header'
+import Nav from '@/components/nav/Nav'
+import Goods from '@/components/goods/Goods'
 export default {
-  name: 'App'
+  name: 'App',
+  components: {
+    'app-header': Header,
+    'app-nav': Nav
+  }
 }
 </script>
 
 <style>
-#app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
+
 </style>
