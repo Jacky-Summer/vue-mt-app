@@ -38,28 +38,78 @@
 			<img class="icon" v-if="poiInfo.discounts2" :src="poiInfo.discounts2[0].icon_url"/>
 
 			<span class="text" v-if="poiInfo.discounts2">{{ poiInfo.discounts2[0].info }}</span>
-			<div class="detail" v-if="poiInfo.discounts2">
+			<div class="detail" v-if="poiInfo.discounts2" @click="showBulletin">
 				{{ poiInfo.discounts2.length }}个活动
 				<span class="icon-keyboard_arrow_right"></span>
 			</div>
 		</div> 
     <!-- 公告内容 结束 -->
 
+    <!-- 公告详情 开始 -->
+    <transition name="fade">
+      <div class="bulletin-detail" v-show="isShow">
+        <div class="detail-wrapper">
+          <div class="main-wrapper" :style="detail_bg">
+            <div class="icon" :style="head_bg"></div>
+              <h3 class="name">{{ poiInfo.name }}</h3>
+              <!-- 星级评价 -->
+              <div class="score">
+                <app-star :score="poiInfo.wm_poi_score"></app-star>
+                <span>{{ poiInfo.wm_poi_score }}</span>
+              </div>
+
+              <p class="tip">
+                {{ poiInfo.min_price_tip }} <i>|</i> {{ poiInfo.shipping_fee_tip }} <i>|</i> {{ poiInfo.delivery_time_tip }}
+              </p>
+
+              <p class="time">
+                配送时间: {{ poiInfo.shipping_time }}
+              </p>
+
+              <div class="discounts" v-if="poiInfo.discounts2">
+                <p>
+                  <img :src="poiInfo.discounts2[0].icon_url" />
+                  <span>{{ poiInfo.discounts2[0].info }}</span>
+                </p>
+              </div>
+          </div>
+
+          <!-- 关闭内容容器 -->
+          <div class="close-wrapper">
+            <span class="icon-close" @click="closeBulletin"></span>
+          </div>
+        </div>
+      </div>
+    </transition>
+    <!-- 公告详情 结束 -->
+
   </div>
 </template>
 
 <script>
+import Star from '../star/Star'
 export default {
   name: 'Header',
   data () {
     return {
-
+      isShow: false
     }
   },
   props: {
     poiInfo: {
       type:Object,
       default:{}
+    }
+  },
+  components: {
+    'app-star': Star
+  },
+  methods: {
+    closeBulletin () {
+      this.isShow = false
+    },
+    showBulletin () {
+      this.isShow = true
     }
   },
   computed: {
@@ -69,6 +119,9 @@ export default {
     head_bg(){
       return "background-image: url(" + this.poiInfo.pic_url + ");"
     },
+    detail_bg(){
+      return "background-image: url(" + this.poiInfo.poi_back_pic_url + ");"
+    }
   }
 }
 </script>
@@ -77,7 +130,7 @@ export default {
 @import url(../../common/css/icon.css);
 .header{
   height: 130px;
-  padding-top: 20px;
+  padding-top: 15px;
 }
 .header .top-wrapper {
 	position: relative;
@@ -221,7 +274,7 @@ export default {
 }
 
 .header .bulletin-wrapper .text {
-  font-size: 11px;
+  font-size: 12px;
   color: white;
   float: left;
   line-height: 16px;
@@ -238,5 +291,129 @@ export default {
   font-size: 16px;
   line-height: 16px;
   float: right;
+}
+/* 公告详情 样式 */ 
+.header .bulletin-detail {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  left: 0;
+  top: 0;
+  background: rgba(98, 98, 98, 0.8);
+  z-index: 999;
+}
+
+.header .bulletin-detail .detail-wrapper {
+  width: 100%;
+  height: 100%;
+  padding: 43px 20px 125px;
+  box-sizing: border-box;
+}
+
+.header .bulletin-detail .detail-wrapper .main-wrapper {
+  width: 100%;
+  height: 100%;
+  background-size: 100% 100%;
+  border-radius: 10px;
+  text-align: center;
+}
+
+.header .bulletin-detail .detail-wrapper .main-wrapper .icon {
+  width: 60px;
+  height: 60px;
+  background-size: 135% 100%;
+  background-position: center;
+  border-radius: 5px;
+  display: inline-block;
+  margin-top: 40px;
+}
+
+.header .bulletin-detail .detail-wrapper .main-wrapper .name {
+  font-size: 15px;
+  color: white;
+  margin-top: 13px;
+}
+
+.header .bulletin-detail .detail-wrapper .main-wrapper .score {
+  height: 10px;
+  margin-top: 6px;
+  text-align: center;
+  font-size: 0;
+}
+
+.header .bulletin-detail .detail-wrapper .main-wrapper .score .star {
+  display: inline-block;
+  margin-right: 7px;
+}
+
+.header .bulletin-detail .detail-wrapper .main-wrapper .score span {
+  display: inline-block;
+  font-size: 10px;
+  color: white;
+}
+
+.header .bulletin-detail .detail-wrapper .main-wrapper .tip {
+  font-size: 11px;
+  color: #bababc;
+  margin-top: 8px;
+}
+
+.header .bulletin-detail .detail-wrapper .main-wrapper .tip i {
+  margin: 0 7px;
+}
+
+.header .bulletin-detail .detail-wrapper .main-wrapper .time {
+  font-size: 11px;
+  color: #bababc;
+  margin-top: 13px;
+}
+
+.header .bulletin-detail .detail-wrapper .main-wrapper .discounts {
+  margin-top: 20px;
+  padding: 0 20px;
+}
+
+.header .bulletin-detail .detail-wrapper .main-wrapper .discounts p {
+  padding-top: 20px;
+  border-top: 1px solid #BABABC;
+}
+
+.header .bulletin-detail .detail-wrapper .main-wrapper .discounts img {
+  width: 16px;
+  height: 16px;
+  vertical-align: middle;
+}
+
+.header .bulletin-detail .detail-wrapper .main-wrapper .discounts span {
+  font-size: 11px;
+  line-height: 16px;
+  color: white;
+}
+
+.header .bulletin-detail .detail-wrapper .close-wrapper {
+  padding-top: 20px;
+  height: 40px;
+  text-align: center;
+}
+
+.header .bulletin-detail .detail-wrapper .close-wrapper span {
+  width: 40px;
+  height: 40px;
+  line-height: 40px;
+  border-radius: 50%;
+  font-size: 14px;
+  color: white;
+  display: inline-block;
+  background: rgba(118, 118, 118, 0.7);
+  border: 1px solid rgba(140, 140, 140, 0.9);
+}
+.fade-enter-active, .fade-leave-active {
+  transition: 2s all;
+}
+.fade-enter, .fade-leave-to {
+  opacity: 0;
+}
+.fade-enter-to, .fade-leave {
+  opacity: 1;
 }
 </style>
