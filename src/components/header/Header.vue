@@ -130,7 +130,7 @@ export default {
 @import url(../../common/css/icon.css);
 .header{
   height: 130px;
-  padding-top: 15px;
+  padding-top: 20px;
 }
 .header .top-wrapper {
 	position: relative;
@@ -223,7 +223,7 @@ export default {
 
 /* 主题内容 样式 */ 
 .header .content-wrapper {
-  padding: 17px 5px 6px;
+  padding: 17px 10px 11px;
   height: 50px;
 }
 
@@ -237,7 +237,7 @@ export default {
 }
 .header .content-wrapper .name {
   float: left;
-  padding-left: 12px;
+  padding: 18px 0 0 12px;
 }
 
 .header .content-wrapper .name h3 {
@@ -263,7 +263,7 @@ export default {
 /* 公告内容样式 */
 .header .bulletin-wrapper {
   height: 16px;
-  padding: 0 5px;
+  padding: 0 10px;
 }
 
 .header .bulletin-wrapper .icon {
