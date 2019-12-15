@@ -5,6 +5,7 @@
         <!-- 专场 -->
         <li 
           class="menu-item" 
+          :class="{ current: currentIndex === 0}"
           @click="selectMenu(0)">
           <p class="text">
             <img class="icon" :src="container.tag_icon" v-if="container.tag_icon">
@@ -14,6 +15,7 @@
 
         <li 
           class="menu-item" 
+          :class="{ current: currentIndex === index + 1}"
           v-for="(item, index) in goods" :key="index"
           @click="selectMenu(index+1)">
           <p class="text">
@@ -73,13 +75,40 @@ export default {
     return {
       container: {},
       goods: [],
-      poiInfo: {}
+      poiInfo: {},
+      listHeight: [],
+      menuScroll: {},
+      foodScroll: {},
+      scrollY: 0,
     }
   },
   methods: {
     initScroll () {
-      new BScroll(this.$refs.menuScroll)
-      new BScroll(this.$refs.foodsScroll)
+      this.menuScroll = new BScroll(this.$refs.menuScroll, {
+        click: true
+      })
+      this.foodScroll = new BScroll(this.$refs.foodsScroll, {
+        click: true,
+        probeType: 3
+      })
+
+      this.foodScroll.on('scroll',(pos) => {
+        this.scrollY = Math.abs(Math.round(pos.y))
+      })
+    },
+    calculateHeight () {
+      let foodlist = this.$refs.foodsScroll.getElementsByClassName('food-list-hook')
+
+      let height = 0
+      this.listHeight.push(height)
+
+      for (let i = 0; i < foodlist.length; i++) {
+        let item = foodlist[i]
+        height += item.clientHeight
+        this.listHeight.push(height)
+      }
+
+
     },
     getAllData () {
       axios.get('./api/goods.json')
@@ -90,13 +119,41 @@ export default {
             this.goods = data.food_spu_tags
             this.poiInfo = data.poi_info
             console.log(data)
-            this.initScroll()
+    
+            this.$nextTick(() => {
 
+              this.initScroll()
+
+              // 计算分类的区间高度
+              this.calculateHeight()
+              // 监听滚动的位置
+              // 根据滚动位置确认下标，与左侧对应
+              // 通过下标实现点击左侧，滚动右侧
+            })
           }
       })
     },
     head_bg (pic) {
       return "backgroundImage: url(" + pic + ")"
+    },
+    selectMenu (index) {
+      let foodsList = this.$refs.foodsScroll.getElementsByClassName('food-list-hook')
+      let element = foodsList[index]
+      this.foodScroll.scrollToElement(element, 250)
+    }
+  },
+  computed: {
+    currentIndex () {
+      for (let i = 0; i < this.listHeight.length; i++) {
+        // 获取商品区间的范围
+        let startHeight = this.listHeight[i]
+        let endHeight = this.listHeight[i + 1]
+        // 是否在上述区间中
+        if ( !endHeight || (this.scrollY >= startHeight && this.scrollY < endHeight)) {
+          return i
+        }
+      }
+      return 0
     }
   },
   created () {
@@ -230,5 +287,14 @@ export default {
 .goods .foods-wrapper .food-list .food-item .content .price .unit{
 	font-size: 12px;
 	color: #BFBFBF;
+}
+/* 当前选中 */ 
+.goods .menu-wrapper .menu-item.current{
+	background: white;
+	font-weight: bold;
+	margin-top: -1px;
+}
+.goods .menu-wrapper .menu-item:first-child.current{
+	margin-top: 1px;
 }
 </style>
