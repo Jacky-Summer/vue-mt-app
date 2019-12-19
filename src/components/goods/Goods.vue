@@ -22,6 +22,9 @@
             <img class="icon" :src="item.icon" v-if="item.icon">
             {{ item.name }}
           </p>
+          <i class="num" v-show="calculateCount(item.spus)">
+            {{ calculateCount(item.spus) }}
+          </i>
         </li>
       </ul>
     </div>
@@ -58,17 +61,26 @@
                   <span class="unit">/{{food.unit}}</span>
                 </p>
               </div>
+              <div class="cartcontrol-wrapper">
+                <app-cart-control :food="food"></app-cart-control>
+              </div>
             </li>
           </ul>
         </li>
       </ul>
     </div>
+
+    <!-- 购物车 -->
+    <app-shopcart :poiInfo="poiInfo"  :selectFoods="selectFoods"></app-shopcart>
+
   </div>
 </template>
 
 <script>
 import axios from 'axios'
 import BScroll from 'better-scroll'
+import Shopcart from '../shopcart/Shopcart'
+import CartControl from '../cartcontrol/CartControl'
 export default {
   name: 'Goods',
   data () {
@@ -81,6 +93,10 @@ export default {
       foodScroll: {},
       scrollY: 0,
     }
+  },
+  components: {
+    'app-shopcart': Shopcart,
+    'app-cart-control': CartControl
   },
   methods: {
     initScroll () {
@@ -109,6 +125,17 @@ export default {
       }
 
 
+    },
+    calculateCount (spus) {
+      let count = 0
+      spus.forEach(food =>{
+        if (food.count > 0) {
+          count += food.count
+          return count
+        }
+      })
+      
+      return count
     },
     getAllData () {
       axios.get('./api/goods.json')
@@ -154,6 +181,17 @@ export default {
         }
       }
       return 0
+    },
+    selectFoods () {
+      let foods = []
+      this.goods.forEach(myfoods => {
+        myfoods.spus.forEach(food => {
+          if (food.count > 0) {
+            foods.push(food)
+          }
+        })
+      })
+      return foods
     }
   },
   created () {
@@ -297,4 +335,24 @@ export default {
 .goods .menu-wrapper .menu-item:first-child.current{
 	margin-top: 1px;
 }
+.goods .foods-wrapper .food-list .food-item .cartcontrol-wrapper{
+	position: absolute;
+	right: 0;
+	bottom: 0;
+}
+
+.goods .menu-wrapper .menu-item .num{
+	position: absolute;
+	right: 5px;
+	top: 5px;
+	width: 13px;
+	height: 13px;
+	border-radius: 50%;
+	color: white;
+	background: red;
+	text-align: center;
+	font-size: 7px;
+	line-height: 13px;
+}
+
 </style>
