@@ -46,6 +46,7 @@
             <li 
               v-for="(food,index) in item.spus" 
               :key="index" 
+              @click="showDetail(food)"
               class="food-item">
               <div class="icon" :style="head_bg(food.picture)"></div>
               <div class="content">
@@ -73,6 +74,9 @@
     <!-- 购物车 -->
     <app-shopcart :poiInfo="poiInfo"  :selectFoods="selectFoods"></app-shopcart>
 
+    <!-- 商品详情 -->
+    <app-product-detail :food="selectFood" ref="foodView"></app-product-detail>
+
   </div>
 </template>
 
@@ -81,6 +85,8 @@ import axios from 'axios'
 import BScroll from 'better-scroll'
 import Shopcart from '../shopcart/Shopcart'
 import CartControl from '../cartcontrol/CartControl'
+import ProductDetail from '../productDetail/ProductDetail'
+
 export default {
   name: 'Goods',
   data () {
@@ -92,11 +98,13 @@ export default {
       menuScroll: {},
       foodScroll: {},
       scrollY: 0,
+      selectFood: {}
     }
   },
   components: {
     'app-shopcart': Shopcart,
-    'app-cart-control': CartControl
+    'app-cart-control': CartControl,
+    'app-product-detail': ProductDetail
   },
   methods: {
     initScroll () {
@@ -123,8 +131,6 @@ export default {
         height += item.clientHeight
         this.listHeight.push(height)
       }
-
-
     },
     calculateCount (spus) {
       let count = 0
@@ -167,6 +173,10 @@ export default {
       let foodsList = this.$refs.foodsScroll.getElementsByClassName('food-list-hook')
       let element = foodsList[index]
       this.foodScroll.scrollToElement(element, 250)
+    },
+    showDetail (food) {
+      this.selectFood = food
+      this.$refs.foodView.showView()
     }
   },
   computed: {
