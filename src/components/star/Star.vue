@@ -50,6 +50,9 @@ export default {
 </script>
 
 <style>
+.star{
+  font-size: 0;
+}
 .star .star-item{
     display: inline-block;
     width: 10px;
